@@ -1,0 +1,6 @@
+
+University of Michigan video - Link prediction
+https://www.coursera.org/learn/python-social-network-analysis/lecture/hvFPZ/link-prediction
+
+Network Analysis /w python docs
+http://pynetwork.readthedocs.io/en/latest/evolution.html
