@@ -1,0 +1,9 @@
+1- install Python 2.7
+
+2- install pip
+
+3- download igraph wheel file from https://www.lfd.uci.edu/%7Egohlke/pythonlibs/#numpy
+
+4- run in wheel directory: pip install python_igraph-0.7.1.post6-cp27-cp27m-win32.whl
+
+you're good to go!
