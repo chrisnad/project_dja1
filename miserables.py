@@ -99,19 +99,6 @@ for e in Edges:
 import plotly
 plotly.tools.set_credentials_file(username='cleitus', api_key='LN8W33LMo7kMNz2LU7Ce')
 
-
-# In[63]:
-
-
-
-
-# In[65]:
-
-#print(len(l))
-
-
-# In[71]:
-
 import plotly.plotly as py
 from plotly.graph_objs import *
 from plotly.offline import iplot
