@@ -23,10 +23,10 @@ def retrieve_edge_name_tuple(g,t):
 
 
 def load_dataset(fileName,g):
-    fileNums=[698]
+    fileNums=[0]
     for i,eachNum in enumerate(fileNums):
         #print(eachNum)
-        fileName="Datasets/facebook/edges/"+str(eachNum)+".edges"
+        fileName="../Datasets/facebook/edges/"+str(eachNum)+".edges"
         #print('fileName=',fileName)
         f=open(fileName)
         line=f.readline()
@@ -181,4 +181,4 @@ fig=Figure(data=data, layout=layout)
 
 #py.iplot(fig, filename = 'test')
 
-py.plot(data, filename = 'fb-3d')
+py.plot(data, filename = 'igraph-3d')

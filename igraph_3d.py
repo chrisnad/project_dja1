@@ -1,7 +1,6 @@
-
-
 from igraph import * 
 G=Graph()
+
 def addVertex(g,name_str):
     try:
         if(name_str not in g.vs['name']):
@@ -13,8 +12,6 @@ def addVertex(g,name_str):
     except KeyError:
         g.add_vertex(name=name_str)
     return g
-   
-
 
 def write_tuple_to_file(f,t):
     string=str(t[0])+' '+str(t[1])+'\n'
@@ -26,7 +23,7 @@ def retrieve_edge_name_tuple(g,t):
 
 
 def load_dataset(fileName,g):
-    fileNums=[107]
+    fileNums=[698]
     for i,eachNum in enumerate(fileNums):
         #print(eachNum)
         fileName="Datasets/facebook/edges/"+str(eachNum)+".edges"
@@ -73,15 +70,19 @@ def calculate_between(g):
     return between
 	
 global eigen
-eigen=calculate_eigen(G)
 global close
-close=calculate_closeness(G)
 global between
+
+print('Eigen Vector:')
+eigen=calculate_eigen(G)
+print('Closeness')
+close=calculate_closeness(G)
+print('Betweenness')
 between=calculate_between(G)
 
 
 N=len(G.vs)
-layt=G.layout('kk', dim=2)
+layt=G.layout('kk', dim=3)
 
 labels=[]
 #print(type(labels))
@@ -89,55 +90,45 @@ for eachNde in G.vs:
     labels.append(eachNde['name'])
 
 Edges=list()
-#print(type(Edges))
 for eachTuple in G.es:
     Edges.append(eachTuple.tuple)
 
 Xn=[layt[k][0] for k in range(N)]# x-coordinates of nodes
 Yn=[layt[k][1] for k in range(N)]# y-coordinates
+Zn=[layt[k][2] for k in range(N)]# z-coordinates
 Xe=[]
 Ye=[]
+Ze=[]
 
 for e in Edges:
     Xe+=[layt[e[0]][0],layt[e[1]][0], None]# x-coordinates of edge ends
     Ye+=[layt[e[0]][1],layt[e[1]][1], None]
+    Ze+=[layt[e[0]][2],layt[e[1]][2], None]
 
 import plotly
 plotly.tools.set_credentials_file(username='cleitus', api_key='LN8W33LMo7kMNz2LU7Ce')
 
-
-# In[63]:
-
-
-
-
-# In[65]:
-
-#print(len(l))
-
-
-# In[71]:
-
 import plotly.plotly as py
 from plotly.graph_objs import *
-from plotly.offline import iplot
 
 
-trace1=Scatter(x=Xe,
+trace1=Scatter3d(x=Xe,
                y=Ye,
+               z=Ze,
                mode='lines',
                line=Line(color='rgb(125,125,125)', width=1),
                hoverinfo='none'
                )
 
-trace2=Scatter(x=Xn,
+trace2=Scatter3d(x=Xn,
                y=Yn,
+               z=Zn,
                mode='markers',
                name='actors',
                marker=Marker(symbol='dot',
                              color=eigen, #
-							 # color=between, #
-							 # color=close, #
+							 #color=between, #
+							 #color=close, #
                              size=6,colorbar=ColorBar(
                 title='Colorbar'
             ),
@@ -157,13 +148,14 @@ axis=dict(showbackground=False,
           )
 
 layout = Layout(
-         title="2D Visualization of the Facebook nodes",
+         title="3D Visualization of the Facebook nodes",
          width=1000,
          height=1000,
          showlegend=False,
          scene=Scene(
          xaxis=XAxis(axis),
          yaxis=YAxis(axis),
+         zaxis=ZAxis(axis),
         ),
      margin=Margin(
         t=100
@@ -189,4 +181,4 @@ fig=Figure(data=data, layout=layout)
 
 #py.iplot(fig, filename = 'test')
 
-py.plot(data, filename = 'fb-2d')
+py.plot(data, filename = 'igraph-3d')

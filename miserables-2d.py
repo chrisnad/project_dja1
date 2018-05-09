@@ -1,8 +1,3 @@
-
-# coding: utf-8
-
-# In[7]:
-
 import igraph as ig
 import json
 import urllib2
@@ -13,21 +8,10 @@ opener = urllib2.build_opener()
 f = opener.open(req)
 data = json.loads(f.read())
 
-
-# In[16]:
-
 L=len(data['links'])
 Edges=[(data['links'][k]['source'], data['links'][k]['target']) for k in range(L)]
 
 G=ig.Graph(Edges, directed=False)
-
-
-# In[19]:
-
-#print((Edges[0]))
-
-
-# In[3]:
 
 labels=[]
 group=[]
@@ -73,7 +57,7 @@ between=calculate_between(G)
 
 
 N=len(G.vs)
-layt=G.layout('kk', dim=3)
+layt=G.layout('kk', dim=2)
 
 labels=[]
 #print(type(labels))
@@ -86,15 +70,12 @@ for eachTuple in G.es:
 
 Xn=[layt[k][0] for k in range(N)]# x-coordinates of nodes
 Yn=[layt[k][1] for k in range(N)]# y-coordinates
-Zn=[layt[k][2] for k in range(N)]# z-coordinates
 Xe=[]
 Ye=[]
-Ze=[]
 
 for e in Edges:
     Xe+=[layt[e[0]][0],layt[e[1]][0], None]# x-coordinates of edge ends
     Ye+=[layt[e[0]][1],layt[e[1]][1], None]
-    Ze+=[layt[e[0]][2],layt[e[1]][2], None]
 
 import plotly
 plotly.tools.set_credentials_file(username='cleitus', api_key='LN8W33LMo7kMNz2LU7Ce')
@@ -104,24 +85,22 @@ from plotly.graph_objs import *
 from plotly.offline import iplot
 
 
-trace1=Scatter3d(x=Xe,
+trace1=Scatter(x=Xe,
                y=Ye,
-               z=Ze,
                mode='lines',
                line=Line(color='rgb(125,125,125)', width=1),
                hoverinfo='none'
                )
 
-trace2=Scatter3d(x=Xn,
+trace2=Scatter(x=Xn,
                y=Yn,
-               z=Zn,
                mode='markers',
                name='actors',
                marker=Marker(symbol='dot',
-                             #color=eigen, #
+                             color=eigen, #
 							 #color=between, #
 							 #color=close, #
-                             color=[data['nodes'][k]['group'] for k in range(len(data['nodes']))], #
+                             #color=[data['nodes'][k]['group'] for k in range(len(data['nodes']))], #
 
                              size=6,colorbar=ColorBar(
                 title='Colorbar'
@@ -149,7 +128,6 @@ layout = Layout(
          scene=Scene(
          xaxis=XAxis(axis),
          yaxis=YAxis(axis),
-         zaxis=ZAxis(axis),
         ),
      margin=Margin(
         t=100
@@ -176,4 +154,4 @@ fig=Figure(data=data, layout=layout)
 
 #py.iplot(fig, filename = 'test')
 
-py.plot(data, filename = 'miserables-3d')
+py.plot(data, filename = 'miserables-2d')
