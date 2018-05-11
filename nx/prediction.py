@@ -37,9 +37,9 @@ for i in M.nodes():
     M.add_node(i, lon = random.uniform(cen_lon - lon_dist(cen_lat), cen_lon + lon_dist(cen_lat)))
 
 
-#Write out initial graph data in JSON file
+#Write out graph data in JSON file
 jsonData = json_graph.node_link_data(M)
-with open('data/evo_0.json', 'w') as outfile:  
+with open('data/miserables.json', 'w') as outfile:  
     json.dump(jsonData, outfile, indent=4)
 
 #print "list of nodes: "
@@ -111,93 +111,23 @@ PA.sort(key=operator.itemgetter(2), reverse = True)
 
 
 
-# ###################### Prediction on Future Edge Linkage ####################
 
-
-FM = M
-for i in PA[0:int(0.1*len(M.edges()))]:
-    FM.add_edge(i[0], i[1], value='new')
-
-for i in CN[0:int(0.1*len(M.edges()))]:
-    FM.add_edge(i[0], i[1], value='new')
-
-#Write out evolved graph data in JSON file
-jsonData = json_graph.node_link_data(FM)
-with open('data/evo_1.json', 'w') as outfile:  
-    json.dump(jsonData, outfile, indent=4)
+# ###################### Prediction on Node Attribute ####################
 
 
 
-# ###################### Plot ####################
+import pandas as pd
 
+df = pd.DataFrame(index=M.nodes())
 
+df['name'] = pd.Series(nx.get_node_attributes(M, 'name'))
+df['group'] = pd.Series(nx.get_node_attributes(M, 'group'))
+df['istrain'] = pd.Series(nx.get_node_attributes(M, 'istrain'))
+df['lat'] = pd.Series(nx.get_node_attributes(M, 'lat'))
+df['lon'] = pd.Series(nx.get_node_attributes(M, 'lon'))
 
-#Nodes and Edges coordinates
-Xv=[M.nodes(data=True)[k]['lat'] for k in range(N)]
-Yv=[M.nodes(data=True)[k]['lon'] for k in range(N)]
-Xed=[]
-Yed=[]
-Xned=[]
-Yned=[]
-for edge in M.edges():
-    Xed+=[M.nodes(data=True)[edge[0]]['lat'],M.nodes(data=True)[edge[1]]['lat'], None]
-    Yed+=[M.nodes(data=True)[edge[0]]['lon'],M.nodes(data=True)[edge[1]]['lon'], None]
-
-for edge in [(i[0], i[1]) for i in list(M.edges(data = True)) if i[2]['value'] == 'new']:
-    Xned+=[M.nodes(data=True)[edge[0]]['lat'],M.nodes(data=True)[edge[1]]['lat'], None]
-    Yned+=[M.nodes(data=True)[edge[0]]['lon'],M.nodes(data=True)[edge[1]]['lon'], None]
-
-Meigen=nx.eigenvector_centrality(FM)
-normeigen = [float(i)/max(Meigen.values()) for i in Meigen.values()]
-
-data = [
-    go.Scattermapbox(
-        lat=Xed,
-        lon=Yed,
-        mode='lines',
-        line=dict(color='rgb(125,125,125)', width=1),
-        hoverinfo='none'
-        ),
-    go.Scattermapbox(
-        lat=Xned,
-        lon=Yned,
-        mode='lines',
-        line=dict(color='rgb(158,18,130)', width=1),
-        hoverinfo='none'
-        ),
-    go.Scattermapbox(
-        lat=Xv,
-        lon=Yv,
-        mode='markers',
-        name='actors',
-        marker=dict(size=10,
-                    color=normeigen, #
-				    #color=normbetween, #
-					#color=normclose, #
-                    #color=[data['nodes'][k]['group'] for k in range(len(data['nodes']))], #
-                    #colorbar=dict(title=''),
-                    colorscale='Viridis',
-                    #line=dict(color='rgb(158,18,130)', width=0.5)
-                    ),
-        text=labels,
-        hoverinfo='text'
-        )
-]
-
-layout = go.Layout(
-    autosize=True,
-    hovermode='closest',
-    mapbox=dict(
-        accesstoken=mapbox_access_token,
-        bearing=0,
-        center=dict(
-            lat=48.856813,
-            lon=2.346654
-        ),
-        pitch=0,
-        zoom=12.50
-    ),
-)
-
-fig = dict(data=data, layout=layout)
-py.plot(fig, filename='Evolution')
+df['eig'] = pd.Series(Meigen)
+df['deg'] = pd.Series(nx.degree_centrality(M))
+df['btw'] = pd.Series(Mbetween)
+df['close'] = pd.Series(Mclose)
+df['cluster'] = pd.Series(nx.clustering(M))
