@@ -1,11 +1,15 @@
 import plotly.plotly as py
 import plotly.graph_objs as go
+import plotly.tools as pt
 import networkx as nx
 import json
 import urllib2
 from networkx.readwrite import json_graph
 import math
 import random
+
+
+pt.set_credentials_file(username='cleitus', api_key='LN8W33LMo7kMNz2LU7Ce')
 
 cen_lat=48.856813
 cen_lon=2.346654
