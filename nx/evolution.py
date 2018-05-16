@@ -79,7 +79,7 @@ labels=[i[1]['name'] for i in M.nodes(data = True)]
 
 
 
-# ###################### Evolution ####################
+# ###################### Evolution #########################
 
 
 
@@ -115,7 +115,7 @@ PA.sort(key=operator.itemgetter(2), reverse = True)
 
 
 
-# ###################### Prediction on Future Edge Linkage ####################
+# ###################### Prediction on Future Edge Linkage ###########################
 
 
 FM = M

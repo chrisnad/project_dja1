@@ -1,12 +1,3 @@
--create directory 'data' in your working directory
-
--start Mongo:
-	-cmd in working directory: $:mongod --dbpath data
-	-cmd in working directory: $:mongoimport --db $db name here$ --collection $collect name here$ --file $json file path$
-				   $:mongo
-				   	>show dbs
-					>db.$collect name$.find().pretty();
-
 -create folder: cgi-bin
 
 -Python web server:
