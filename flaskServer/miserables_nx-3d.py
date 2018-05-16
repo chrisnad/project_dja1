@@ -27,58 +27,67 @@ import networkx as nx
 #G = nx.Graph(mat)
 #print(nx.info(G))
 
+
+
+# miserables json graph
+import json
+import urllib2
+
+data = []
+req = urllib2.Request("https://raw.githubusercontent.com/plotly/datasets/master/miserables.json")
+opener = urllib2.build_opener()
+f = opener.open(req)
+data = json.loads(f.read())  #data is a dict
+
+nodes = data[data.keys()[0]]
+links = data[data.keys()[1]]
+
+M = nx.Graph()
+
+M = nx.Graph([(i['source'], i['target'], {'value' : i['value']}) for i in links])
+for i in M.nodes():
+    M.add_node(i, group = nodes[i]['group'])
+    M.add_node(i, name = nodes[i]['name'])
+
+#print "list of nodes: "
+#print M.nodes(data = True)
+#print "list of edges: "
+#print M.edges(data = True)
+
+
+#Eigenvector centrality criteria
+Meigen=nx.eigenvector_centrality(M)
+normeigen = [float(i)/max(Meigen.values()) for i in Meigen.values()]
+
+
+#Closeness centrality
+Mclose=nx.closeness_centrality(M)
+normclose = Mclose.values()
+
+
+#Betweeness centrality
+Mbetween=nx.betweenness_centrality(M)
+normbetween = Mbetween.values()
+
+
 #Graph edges in list form
-#Gedges = [i for i in G.edges()]
- 
-G=nx.Graph()
-gi=nx.Graph()
-
-fileNums=[0]
-for i in fileNums:
-    fileName="../Datasets/facebook/edges/"+str(i)+".edges"
-    gi = nx.read_edgelist(fileName)
-    G = nx.compose(G,gi)
-
-print(nx.info(G))
+Medges = [i for i in M.edges()]
 
 
 #Layout
-pos=nx.fruchterman_reingold_layout(G, dim=3)
-lay=list()
-for i in pos.values():
-    lay.append(list(i))
-
-N=len(G.nodes())
-#labels=[i for i in pos.keys()]
-
-ulti = {}
-for i in pos.keys():
-    ulti[i]=list(pos[i])
-
-#Eigenvector centrality criteria (normalised)
-Geigen=nx.eigenvector_centrality(G)
-for i in Geigen:
-    ulti[i].append(float(Geigen[i])/max(Geigen.values()))
-
-#Closeness centrality
-Gclose=nx.closeness_centrality(G)
-for i in Gclose:
-    ulti[i].append(Gclose[i])
-
-#Betweeness centrality
-Gbetween=nx.betweenness_centrality(G)
-for i in Gbetween:
-    ulti[i].append(Gbetween[i])
+pos=nx.fruchterman_reingold_layout(M, dim=3)
+N=len(M.nodes())
+labels=[i[1]['name'] for i in M.nodes(data = True)]
 
 
 #Nodes and Edges coordinates
-Xv=[lay[k][0] for k in range(N)]# x-coordinates of nodes
-Yv=[lay[k][1] for k in range(N)]# y-coordinates
-Zv=[lay[k][2] for k in range(N)]# z-coordinates
+Xv=[pos[k][0] for k in range(N)]
+Yv=[pos[k][1] for k in range(N)]
+Zv=[pos[k][2] for k in range(N)]
 Xed=[]
 Yed=[]
 Zed=[]
-for edge in G.edges():
+for edge in M.edges():
     Xed+=[pos[edge[0]][0],pos[edge[1]][0], None]
     Yed+=[pos[edge[0]][1],pos[edge[1]][1], None]
     Zed+=[pos[edge[0]][2],pos[edge[1]][2], None]
@@ -87,9 +96,6 @@ for edge in G.edges():
 #Plotly
 import plotly.plotly as py
 from plotly.graph_objs import *
-import plotly.tools as pt
-
-pt.set_credentials_file(username='zhening', api_key='9LICBZ681YiPTiSZCuFX')
 
 trace1=Scatter3d(x=Xed,
                y=Yed,
@@ -105,9 +111,9 @@ trace2=Scatter3d(x=Xv,
                mode='markers',
                name='actors',
                marker=Marker(symbol='dot',
-                             color=[i[-3] for i in ulti.values()], # Eigenvector centrality
-							 #color=[i[-2] for i in ulti.values()], # Closeness centrality
-							 #color=[i[-1] for i in ulti.values()], # Betweeness centrality
+                             color=normeigen, #
+							 #color=normbetween, #
+							 #color=normclose, #
                              #color=[data['nodes'][k]['group'] for k in range(len(data['nodes']))], #
 
                              size=6,colorbar=ColorBar(
@@ -116,9 +122,9 @@ trace2=Scatter3d(x=Xv,
                              colorscale='Viridis',
                              line=Line(color='rgb(158,18,130)', width=0.5)
                              ),
-               text=ulti.keys(),  # node Labels
+               text=labels,
                hoverinfo='text'
                )
 
 data=Data([trace1, trace2])
-py.plot(data, filename = 'networkx-3d')
+py.plot(data, filename = 'miserables_nx-2d')

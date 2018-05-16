@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, Response, jsonify
 from flask_cors import CORS, cross_origin
 import fb_zhening
 
@@ -9,19 +9,13 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/script', methods=['GET'])
 @cross_origin()
-def config():
+def runScript():
     print "debut"
-    fb_zhening.function()
+    fb_zhening.function(nodes, links)
     print 'Fin'
-    resp = Response('toto')
+    resp = [{'id':1,'title':'toto'}, {'id':2,'title':'titi'}]
     print 'toto'
-    return resp
-
-@app.route('/test', methods=['GET'])
-@cross_origin()
-def a():
-    print "HI"
-    return "Hello, cross-origin-world!"
+    return jsonify({'resp':resp})
 
 if __name__ == "__main__":
   app.run(host='0.0.0.0')

@@ -44,6 +44,7 @@ G=nx.Graph()
 gi=nx.Graph()
 
 fileNums=[3980, 686, 414, 348, 0]
+#fileNums=[3980, 686, 414, 348, 0]
 group_center=[[48.891986,2.319287],[48.878562,2.360369],[48.843491,2.351834],[48.858370,2.294481],[48.864049,2.331053]]
 g = 0
 for i in fileNums:
@@ -53,6 +54,9 @@ for i in fileNums:
         gi.add_node(j, group = g)
         gi.add_node(j, name = namesgenerator.get_random_name())
         gi.add_node(j, istrain = bool(random.getrandbits(1)))
+        R_age=random.uniform(18,69)
+        gi.add_node(j, age = int(R_age-(R_age-18)*random.random()))
+        gi.add_node(j, salle = int(6*random.random()))
         cen_lat=group_center[g][0]
         cen_lon=group_center[g][1]
         point = genpoint(cen_lon, cen_lat, 0.5*len(gi.nodes())/60)

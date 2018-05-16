@@ -11,19 +11,31 @@ import math
 import random
 
 
-def function(data):
+def function():
     mapbox_access_token = 'pk.eyJ1IjoiY2xlaXR1cyIsImEiOiJjamgwZ2c1a3Yxc3dtMnFtb2ptdDR5ZWs0In0.sjZdn45v32AojmWGWIN9Tg'
     pt.set_credentials_file(username='cleitus', api_key='LN8W33LMo7kMNz2LU7Ce')
 
     # ########################### Reading Initial Data ###################################
-    links = 
+
+    nodes = []
+    req = urllib2.Request("http://192.168.102.112:3000/stalker/nodes")
+    opener = urllib2.build_opener()
+    N = opener.open(req)
+    nodes = json.loads(N.read())
+
+    links = []
+    req = urllib2.Request("http://192.168.102.112:3000/stalker/edges")
+    opener = urllib2.build_opener()
+    L = opener.open(req)
+    links = json.loads(L.read())
+
     for i in links:
         i['value'] = 'init'
 
     # ########################### Reading Initial Data ###################################
 
-    nodes = data['nodes']
-    links = data['edges']
+    #nodes = data['nodes']
+    #links = data['links']
 
     M = nx.Graph()
 

@@ -9,6 +9,7 @@ import urllib2
 from networkx.readwrite import json_graph
 import math
 import random
+#from statistics import mean
 
 
 
@@ -190,11 +191,11 @@ layout = go.Layout(
         accesstoken=mapbox_access_token,
         bearing=0,
         center=dict(
-            lat=48.856813,
-            lon=2.346654
+            lat=sum(Xv)/len(M.nodes()),
+            lon=sum(Yv)/len(M.nodes())
         ),
         pitch=0,
-        zoom=12.50
+        zoom=abs(math.log((99999999*(max(Xv)-min(Xv)))))
     ),
 )
 
